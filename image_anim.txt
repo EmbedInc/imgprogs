@@ -1,0 +1,128 @@
+                           Program IMAGE_ANIM
+
+image_anim [options]
+
+This program packs multiple animation frames into one image file to create
+an animated image file.  Note that this is not possible with all output
+image formats.  The program aborts with error if an attempt is made to
+write more frames to the output image file than is possible with the
+output image file format (as supported by the driver).  The command line
+options are:
+
+  <output image file name>
+
+    The first command line option that does not start with a dash (-) is
+    assumed to be the output image file name, unless the output image file
+    name has already been given by other means. See the -OUT command line
+    option description.
+
+  <input image file name>
+
+    If a command line does not start with a dash (-) and the output image
+    file name has already been given, then the command line option is
+    assumed to be an input image file name.  See the -IN command line
+    option description.
+
+  -OUT <output image file name>
+
+    Explicitly sets the name of the animated image file to produce. NOTE:
+    Unlike most other Embed Inc imaging software, the default image file
+    type is .GIF instead of .IMG.  This default is used when no
+    recognizable image file type suffix is found on the file name.
+
+  -IN <input image file name>
+
+    Explicitly declares the next input frame(s) to add to the resulting
+    animation.  The input file name has the normal syntax, except that the
+    "#" character has a special meaning.  The "#" character expands to one
+    or more sequential decimal integer digits, denoting an animation frame
+    number or other sequence number.  The images will be added to the
+    animation in ascending sequence number order.  There must not be more
+    than one "#" character.  If present, it must appear in the leafname,
+    not the directory name.
+
+  -INLIST <file name>
+
+    The indicated file contains a list of input images.  Each line of the
+    list file must contain one image file name (# number wildcard is
+    permitted).  Blank lines are ignored.
+
+  -STDIN
+
+    Indicate that a list of image files will be supplied via standard
+    input.  The format of the standard input stream must be the same as
+    that for an images list file as referenced by the -INLIST command line
+    option.  The -STDIN option may be useful for shell script "here
+    documents", or when running IMAGE_ANIM in a pipe where the previous
+    program produces a list of input frames.  There should only be at most
+    one -STDIN command line option.
+
+  -LOOP
+
+    Indicates that the animation is to be an infinite loop, as apposed to
+    once-thru.  This is the default.
+
+  -NLOOP
+
+    Indicates that the animation is to be displayed only once.  The last
+    frame is to be displayed after the animation completes. The default is
+    -LOOP, above.
+
+  -RATE <frame rate>
+
+    Sets the desired frame rate for subsequent input frames.  The frame
+    rate is measured in frames per second.  The initial setting is 10
+    frames/second.  Note only input frames referenced on the command line
+    after -RATE are effected by the new rate setting.
+
+  -WAITF s
+
+    Set the number of seconds the first frame should be displayed before
+    starting the animation.  The default is that implied by the frame rate
+    in effect for the first frame.
+
+  -WAITL s
+
+    Overrides the length of time in seconds the last frame should be
+    displayed.  The default is that implied by the frame rate in effect
+    for the last frame.
+
+  -FORM <format string>
+
+    The format string is passed directly to the image output file driver
+    without interpretation.  The format string may be private to the
+    driver, and therefore specific to a particular image file format.  See
+    the -FORM command line option description to the IMAGE_COPY command.
+
+  -ZOOM n
+
+    Set the pixel replication integer zoom factor.  Input images will be
+    enlarged by this factor before being stored in the output image file.
+    The default is 1.
+
+  -ALPHA
+
+    Indicate that alpha values (opacity fractions) should be transferred
+    from the input images to the animation frames if possible.  The
+    default is to transfer only the red, green, and blue components.
+
+  -NALPHA
+
+    Indicate that alpha value (opacity fractions) should not be
+    transferred from the input images to the animation frames if possible.
+    This is the default.
+
+Frames are added to the animation as they are encountered via the command
+line options.
+
+Some image file formats may not provide frame rate control, or control
+over the display time of individual frames.  In those cases, arbitrary or
+default values are silently substituted.  Note that display systems often
+don't adhere to these value, even if they can be encoded into the animated
+image file.
+
+Some image file formats may not provide a means of specifying whether the
+animation should loop or not.  In those cases, the -LOOP and -NLOOP
+command line options are silently ignored.
+
+All input images must be the same size in pixels.

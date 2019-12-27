@@ -1,0 +1,136 @@
+                           Program IMAGE_DITHER
+                             24 October 2004
+
+image_dither <input file name> [ options ]
+
+Apply a dither pattern to the input image to create an output image. Both
+the input and output images can be any of the supported image file
+formats.  See the IMAGE_TYPES documentation file for details of the
+supported formats.
+
+
+                           Command Line Options
+
+-OUT filename
+
+  Specify the output image file name explicitly.  The default is a file in
+  the working directory with the same generic name as the input file name.
+
+-BITS r g b
+
+  Indicate how many bits per color the final output image should have.
+  Note that this is a subset of the more general -LEVELS command line
+  option.  The -BITS command line option is mutually exclusive with the
+  -LEVELS command line option.  The default levels per color can not be
+  expressed with the -BITS option.
+
+-LEVELS r g b
+
+  Indicate how many actual levels per color the final output image should
+  have.  This is not the apparent levels per color achieved by dithering,
+  but the maximum actual levels for all output pixels for each color.  The
+  -LEVELS command line option is mutually exclusive with the -BITS command
+  line option.  The default is -LEVELS 6 7 6, which uses a total of 252
+  possible red/green/blue combinations, and therefore fits into 8
+  bits/pixel.
+
+-PATT name
+
+  Selects a pre-defined dither pattern.  The predefined dither patterns
+  come from regular dither pattern files (defined below).  These files are
+  in progs/image_dither within the software installation directory, and
+  have names f_<name>.dith, where <name> stands for the argument entered
+  after the -PATT command line option.  See the comment headers in these
+  files for a description of each dither pattern and an explanation of its
+  purpose.
+
+  The default is DIAG5.  This pattern is a diagonally oriented halftone
+  screen intended for printers where pixels overlap each other slightly.
+  This pattern produces 50 apparent intensity levels when output pixels
+  are either all full white or full black.  For printers with 300
+  dots/inch, the halftone screen will be 42 dots/inch.  For 600 dpi
+  printers, the halftone screen will be 85 dots/inch.  Typical newspaper
+  halftone screens are usually around 75-85 dots/inch.
+
+-PATT_FNAM filename
+
+  Selects the dither pattern by explicitly giving its file name. The
+  format of dither pattern files is explained below.  The default is a
+  pre-defined dither pattern.   See the description for the -PATT command
+  line option, above.
+
+
+                        Dither Pattern File Format
+
+Dither pattern files are regular text files that can be examined and
+modified by normal text editors.  Blank lines are ignored, and "/*" starts
+a end of line comment.  In other words, "/*" and all characters following
+it on the same line are ignored.  All keywords are case-insentitive.
+Tokens are delimited with blanks.  Redundant blanks are ignored.  Tokens
+may be enclosed in matching quotes ("") or apostrophies ('').  This is
+required if the token contains one or more blanks.
+
+Dither pattern files contain commands, which may be followed by arguments.
+Each command must start on a new line.  Commands must be completely
+contained on one line, except as noted.  The valid commands are:
+
+  SIZE nx ny
+
+    Declares the dither pattern size in pixels.  The dither pattern will
+    be a repeating array of tiles, each NX x NY pixels in size.  The top
+    left pixel in the image will be aligned with the top left corner of
+    the dither pattern.  This command must be present, and must preceed
+    the THRESHOLDS command.
+
+  RANGE_THRESH min max
+
+    Declares the range of threshold values used in the THRESHOLDS command.
+    The default is 0 to NX*NY (from the SIZE command).  If present, this
+    command must preceed the THRESHOLDS command.
+
+  LEVELS n
+
+    Declares the number of distinct threshold levels.  This is used to
+    determine the total number of apparent levels in the output image.
+    The total apparent levels is (output levels per pixel - 1)*N + 1.  The
+    default for N is NX*NY (from the SIZE command). If present, this
+    command must preceed the THRESHOLDS command.
+
+  THRESHOLDS
+
+    Indicates the threshold values for each pixel in the dither pattern.
+    When dithering any one pixel, a choice must be made between two
+    possible adjacent output values.
+
+    First, the bias value is computed, which indicates where the incoming
+    pixel value falls within the range of the two possible output pixel
+    value choices.  A bias value of 0.0 indicates that the incoming pixel
+    value is exactly the same as the lower of the two output pixel value
+    choices.   A value of 1.0 indicates it is the same as the higher of
+    the two output choices.
+
+    The bias value is then compared to the dither threshold value for that
+    pixel.  The higher of the two possible output levels is chosen if the
+    bias value meets or exceeds the threshold value. For purposes of this
+    comparison, the threshold value is normalized to the 0.0 to 1.0 range,
+    based on the MIN and MAX arguments to the RANGE_THRESH command.
+
+    The threshold values are given on the lines following the THRESHOLDS
+    command.  Each subsequent line corresponds to one row in the dither
+    pattern.  Therefore, there must be NY lines following, each containing
+    NX numbers.  (NX and NY come from the SIZE command.)
+
+    For evenly spaced dither thresholds, the 0.0 to 1.0 normalized
+    thresholds should start at 1/N (from the LEVELS command) and go to 1.
+    For example, for a simple 2x2 dither pattern, the normalized
+    thresholds would be .25, .5, .75, and 1.  An easy way to achieve this
+    is for the RANGE_THRESH values to be 0 to the LEVELS value.  The
+    threshold values are then just all the integers from 1 to the LEVELS
+    value.
+
+    The THRESHOLDS command must always be the last command in the dither
+    pattern file.  It is an error if any non-comment lines follow the
+    THRESHOLDS command.
+
+For example dither pattern files, look in progs/image_dither within the
+software installation directory.

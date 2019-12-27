@@ -1,0 +1,23 @@
+                            Program IMAGE_HIST
+
+image_hist <image file name> [<histogram file name>]
+
+Produce a histogram of the pixel color component values of an image.
+
+The output file name will default to the generic leafname of the image
+input file with "_hist" appended.  For example, if the image input file
+was /images/teapot.img, then the default output file name is teapot_hist.
+
+The histogram file will contain 256 lines of 5 numbers each.  The first
+number is the 0.0 to 1.0 component value for that line.  The remaining 4
+numbers are the normalized occurrence counts of red, green, blue, and
+alpha, repsectively.  These occurrence counts are normalized to 100% for
+each component value.  In other words, there is at least one 100.0% value
+somewhere in each of the last four columns.
+
+Whenever an occurrence count is exactly zero, only "0" is shown without
+any decimal point or numbers below it.
+
+IMAGE_HIST also prints the average values of red, green, blue, and alpha
+for the whole image.  This is printed to standard output and is not
+written to the histogram file.

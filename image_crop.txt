@@ -1,0 +1,83 @@
+                           Program IMAGE_CROP
+                             10 June 2005
+
+image_crop [options]
+
+Copy a rectangle of the input image to the output image. See the
+IMAGE_TYPES documentation file for a discussion of the supported image
+file formats.  The command line options are:
+
+  <input file name>
+
+    When a command line option is encountered that does not start with a
+    dash (-) it is assumed to be the input file name, if the input file
+    name has not already been set.  This form of specifying the input file
+    name is for convenience, and does not work when the name starts with a
+    dash.  The -IN command line option works in all cases.  There is no
+    default input file name.  It is an error if no input file name is
+    supplied.
+
+  <output file name>
+
+    When a command line option is encountered that does not start with a
+    dash (-) it is assumed to be the output file name, if the input file
+    name has already been set.  This form of specifying the output file
+    name is for convenience, and does not work when the name starts with a
+    dash.  The -OUT command line option works in all cases.  The default
+    output file name is the generic leafname (no directory path, no file
+    type suffix) of the input file.
+
+  -IN <input file name>
+
+    Explicitly set the input file name.  See the IMAGE_TYPES documentation
+    file for a discussion of image file naming conventions.  There is no
+    default input file name.  It is an error if no input file name is
+    supplied.
+
+  -OUT <output file name>
+
+    Explicitly set the output file name.  See the IMAGE_TYPES
+    documentation file for a discussion of image file naming conventions.
+    The image file format can be selected by using a file type suffix.
+    See the IMAGE_TYPES documentation file for details.  The default
+    output file name is the generic leafname (no directory path, no file
+    type suffix) of the input file.
+
+  -UL x y
+
+    Specifies the input image pixel that will be the upper left corner
+    pixel of the output image.  The default is 0 0.
+
+  -SIZE dx dy
+
+    Sets the size in pixels of the rectangle to be written to the output
+    image.  This is therefore also the output image size.  The default is
+    to write to the right and lower edges of the input image.
+
+  -COM <comment string>
+
+    Add a comment to the image output file.  There may be any number of
+    -COM command line options.  Note that the comment string must be
+    enclosed in quoted ("") or apostrophies ('') if it contains any blanks
+    or special characters.
+
+    Image file comments can be viewed with the IMAGE_INFO program.
+
+  -FTYPE <output file type>
+
+    Explicitly set the output image file type.  See the IMAGE_TYPES
+    documentation file for a list of the supported output image file
+    types.  The -FTYPE argument is the image file type name, like "IMG",
+    or "GIF".  The argument is case-insensitive, regardless of the file
+    type suffix.  By default, the output image file type is derived from
+    the output image file name if possible, else the IMG image file type
+    is used.
+
+  -FORM <format string>
+
+    This allows additional configuration information to be passed to the
+    output image file driver.  See the IMAGE_COPY program documentation
+    file for a full description of the -FORM command line option.
+
+The region copied from the input image is always clipped to the extent of
+the input image, and must be at least 1 pixel in size.

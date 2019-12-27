@@ -1,0 +1,210 @@
+                           Program IMAGE_COPY
+                            24 October 2004
+
+image_copy <in file name> [<output file name>] [ options ]
+
+Copy an image from the input file to the output file.  See the IMAGE_TYPES
+documentation file for a discussion of which image file formats are
+supported.  Valid command line options are:
+
+  <output file name>
+
+       Explicitly set the generic output file name.  The real output file
+       name always has a particular suffix appended, depending on the
+       output file type.
+
+       The suffix is permitted on the command line argument, and will not
+       appear twice in the real output file name.  The default output file
+       name is the generic leaf name of the input file. This is useful
+       when the input file is being copied from another directory.
+
+       This option, if present, must immediately follow the input file
+       name.
+
+  -FTYPE <image file type name>
+
+       Select the image output file type.  The valid choices are the names
+       of all the available image file I/O drivers.  These are described
+       in the documentation file IMAGE_TYPES.  Examples are "IMG" or
+       "TGA".  These names also correspond to the file name suffixes,
+       although the file name suffixes are always lower case, whereas the
+       <image file type name> parameter is case-insensitive.  The default
+       is IMG.
+
+  -FORM <format string>
+
+       Pass specific format commands to the driver used for writing the
+       output file.  Some commands are standard, and are therefore allowed
+       with all image file drivers.  Others are specific to particular
+       drivers.  Note that although all drivers may allow the standard
+       commands, they are considered suggestions and different drivers may
+       react differently.  Here are the standard format commands.  Driver
+       specifics are noted at the end if each command description.
+
+       -GRAY
+
+         Indicates that the image data will be gray scale, meaning that
+         the red, green, and blue values are always the same within each
+         pixel. Results are undefined if non-gray data is sent.  The
+         driver is not obligated to convert to gray scale, and may assume
+         the data will be gray scale if this options is is used.  Some
+         image file formats allow gray scale images to be stored more
+         compactly or with higher fidelity than color images.  The -GRAY
+         option allows the driver to use these alternate formats.
+
+         Supporting drivers:
+
+           GIF
+
+             Color values are automatically converted to gray scale.
+             Defines a pallette with 256 shades of gray, which therefore
+             preserves 8 bits of intensity information per pixel.  Unlike
+             other GIF variants, this can be considered lossless for gray
+             scale images.
+
+           JPG
+
+             Color values are converted to 8 bit gray scale.
+
+       -QUAL qual
+
+         Set the tradeoff between quality and compression, when available.
+         The QUAL value may be from 0 to 100, with 100 preserving the most
+         image information and 0 causing the highest compression ratio.
+         In general, the default is 100.
+
+         Supporting drivers:
+
+           JPG
+
+             The default QUAL value is 50, which is about the lowest value
+             where a casual observer won't notice any compression
+             artifacts on scanned photographs. Obviously this is
+             subjective and varies from image to image.  Experimentation
+             is recommended.
+
+       The remaining format commands are specific to particular drivers,
+       and may result in an error if used with a different driver.  These
+       commands are therefore listed by driver type.
+
+       Format commands unique to the GIF driver are:
+
+       -DITH <method>
+
+         This command controls how the incoming 8 bit per color per pixel
+         true color values are to be converted to the GIF 8 bit pseudo
+         color values.  Choices are:
+
+         NONE
+
+           Picks closest color from 240 (6 red, 8 green, 5 blue).  A pixel
+           is made transparent if its opacity is less then 1/2.  This
+           conversion method is best when the exact colors aren't
+           important, and the image contains no smooth shaded areas.  Line
+           art drawings are good examples where this conversion method
+           might be useful.  This method generally results in smaller
+           files than the other methods.
+
+         4x4
+
+           4 x 4 regular dither pattern.  The dither pattern is also used
+           to achieve more levels of transparency.
+
+         The default is 4x4.
+
+  -ALPHA [<bits precision>]
+  -RED [<bits precision>]
+  -GRN [<bits precision>]
+  -BLU [<bits precision>]
+
+       Declare the minimum desired bits of precision per pixel for each of
+       the alpha, red, green, or blue pixel components.  This will be done
+       if possible, but is not guaranteed.  The default precisions when
+       these command line options are not used are the precisions used in
+       the input file.  When these command line options are used without
+       the <bits precision> parameter, then <bits precision> defaults to 8
+       if the component did not exist (precision = 0) in the input file
+       and the -BITS command line option is not used.
+
+       These command line options without the <bits precision> parameter
+       are intended for declaring the existance of pixel components while
+       otherwise effecting the precision as little as possible.
+
+  -BITS <bits precision>
+
+       Set the precision for all pixel components that would otherwise be
+       set to more than zero, and are not explicitly set.  This option is
+       intended as an easy way to chose between output file formats of
+       different precisions without effecting which pixel components
+       exist.  This will also be the precision default for any component
+       precision command line option without the <bits precision>
+       parameter.
+
+  -BW
+
+       Convert the image to gray scale ("black and white").  The NTSC
+       conversion for black and white television is used.  The 0 to 1
+       black to white intensity will be .299 red + .587 green + .114 blue.
+
+The remaining command line options control a filter that can adjust the
+red, green, and blue values in each pixel.  Conceptually, there are 3
+stages to this filter.  In order, they are a linear transform, non-linear
+brightness and saturation adjustments, and another linear transform.
+
+Parameters for stage 1 (input linear transform) are:
+
+  -RANGE     <black level> <white level>
+  -RANGE_RED <black level> <white level>
+  -RANGE_GRN <black level> <white level>
+  -RANGE_BLU <black level> <white level>
+
+       Select the input image levels that will be passed to stage 2 as the
+       full black and full white levels.  The input image values are in a
+       0.0 to 1.0 scale.  The -RANGE command line option sets the values
+       for all three color components the same.
+
+       The stage 1 transform is most useful for images that do not make
+       use of the whole 0.0 to 1.0 available range, or that do not have
+       red green and blue mapped to the same range.  This is typical of
+       images that are digitized as apposed to computer generated.  The
+       program IMAGE_HIST may be useful to determine what the black to
+       white range should be.  The format of the numbers here is
+       intentionally the same format as the numbers in column one of a
+       histogram from IMAGE_HIST.
+
+       The default is to not alter the color ranges (black level = 0.0,
+       white level = 1.0).
+
+Parameters for stage 2 (non-linear brightness and saturation adjust) are:
+
+  -BRIGHTEN f
+
+       Brighten or darken the image while not altering the ends of the
+       range.  Positive values will brighten the image, while negative
+       values will darken it.  Useful values are typically in the range of
+       -1 to 1.  The default is to not alter the image values (F = 0.0).
+
+  -SATURATE f
+
+       Adjust the relative saturation of color values.  This adjustment
+       will have no effect on fully desaturated (gray) or fully saturated
+       colors.  Intermediate colors will be more saturated when F is
+       positive and less saturated when F is negative. Useful values are
+       typically in the range of -1 to 1.  The default is to not alter the
+       saturation (F = 0.0).
+
+Parameters for stage 3 (output linear transform) are:
+
+  -OFS_LOW f
+
+       Add an offset to the low (black) end of the color range.  The image
+       color values will be transformed from the range (0.0 --> 1.0) to (F
+       --> 1.0).  The default is to not alter the black color value (F =
+       0.0).
+
+  -OFS_HIGH f
+
+       Add an offset to the high (white) end of the color range.  The
+       image color values will be transformed from the range (0.0 --> 1.0)
+       to (0.0 --> 1.0+F).  The default is to not alther the white color
+       value (F = 0.0).

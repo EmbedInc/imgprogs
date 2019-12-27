@@ -1,0 +1,36 @@
+                           Program IMAGE_FILTER
+
+image_filter <input file name> <output file name> [<options> . . .]
+
+Read the input image file and create the output image file.  The image
+will be shrunk and filtered in the process.  The legal command line
+options are:
+
+  -SHRINK n
+
+    Shrink the image by integer factor N in both dimensions.  The default
+    for N is 2.
+
+  -DSHRINK nx ny
+
+    Shrink the image with different shrink factors for the X and Y
+    dimensions.  NX and NY must be positive integers.  The default is to
+    shrink the image by 2 in both dimensions.
+
+  -FILTER filter_file_name
+
+    Load the filter kernel funtion from a file.  The filter kernel
+    function is always assumed to be radially symmetric.  The filter file
+    is an ASCII file that describes the filter function value as a
+    function of the radius from 0 to some maximum value.  The first
+    (non-comment) line in the filter file contains one value indicating
+    the maximum radius the filter function should be evaluated at.  This
+    is a floating point number in terms of output image pixel sizes.
+    Therefore, a value of 1.5 would cause a filter kernel that is 3x3
+    output pixels in size.  The remaining lines in the file each contain a
+    pair of numbers.  The first number is a radius, and the second is the
+    function value at that radius.  The function will be linearly
+    interpolated between adjacent points. The radius values MUST be in
+    ascending order.  Blank lines, and lines that start with a star (*)
+    are comment lines.  The default is a cos**2 filter with a radius of
+    1.25 output pixel widths.

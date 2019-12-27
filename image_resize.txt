@@ -1,0 +1,144 @@
+                          Program IMAGE_RESIZE
+                            24 October 2004
+
+image_resize [options]
+
+This program copies an image from one file to another while changing its
+size.  See the IMAGE_TYPES documentation file for a discussion of the
+supported image file formats.  The command line options are:
+
+  <input file name>
+
+    When a command line option is encountered that does not start with a
+    dash (-) it is assumed to be the input file name, if the input file
+    name has not already been set.  This form of specifying the input file
+    name is for convenience, and does not work when the name starts with a
+    dash.  The -IN command line option works in all cases.  There is no
+    default input file name.  It is an error if no input file name is
+    supplied.
+
+  <output file name>
+
+    When a command line option is encountered that does not start with a
+    dash (-) it is assumed to be the output file name, if the input file
+    name has already been set.  This form of specifying the output file
+    name is for convenience, and does not work when the name starts with a
+    dash.  The -OUT command line option works in all cases.  The default
+    output file name is the generic leafname (no directory path, no file
+    type suffix) of the input file.
+
+  -IN <input file name>
+
+    Explicitly set the input file name.  See the IMAGE_TYPES documentation
+    file for a discussion of image file naming conventions.  There is no
+    default input file name.  It is an error if no input file name is
+    supplied.
+
+  -OUT <output file name>
+
+    Explicitly set the output file name.  See the IMAGE_TYPES
+    documentation file for a discussion of image file naming conventions.
+    The image file format can be selected by using a file type suffix.
+    See the IMAGE_TYPES documentation file for details.  The default
+    output file name is the generic leafname (no directory path, no file
+    type suffix) of the input file.
+
+  -FIT x y
+
+    Set the number of horizontal (X) and vertical (Y) pixels the output
+    image must fit within.  The output image will have the specified
+    number of pixels in one dimension, with the other depending on the
+    aspect ratios of the fit size, the image, and the output pixels.  The
+    -FIT command line option can be overridden by the -SIZE option, and is
+    always overridden by the -SCALE option.  The default is -FIT 640 512.
+
+  -PASP <pixel aspect ratio>
+
+    Set the aspect ratio of the output pixels.  The value is a pixel's
+    width divided by its height.  This value can be overridden by the
+    -SIZE option, and is always overridden by the -SCALE option.  The
+    default is -PASP 1 (square pixels).
+
+  -SIZE x y
+
+    Explicitly set the number of pixels in the output image in each
+    dimension.  There must be at least one pixel along each dimension.
+
+    If either value, but not both, is set to zero, then the number of
+    pixels in that dimension will be adjusted to maintain the pixel
+    apspect ratio as set by the -PASP command line option.  If both values
+    are zero, then the -FIT command line option takes precedence.
+
+    The default is -SIZE 0 0 (-FIT is in effect).
+
+  -SCALE <scale factor>
+
+    Explicitly set the image size scale factor to apply to the old image
+    to make the new image.  The image and pixel aspect ratios are
+    preserved, so this command line option overrides -FIT, -PASP, and
+    -SIZE.  For example, -SCALE 1.5 applied to an image with 100 by 80
+    pixels yeilds an image with 150 by 120 pixels. Note that the program
+    IMAGE_FILTER is more efficient at shrinking an image by an integer
+    scale factor than IMAGE_RESIZE, which works on arbitrary scale
+    factors.  No fixed scale factor is applied by default.
+
+  -SHRINK <shrink factor>
+
+    This command line options is just like -SCALE, except that scaling is
+    specified as a shrink factor instead of an enlargement factor.  The
+    shrink factor is the reciprocal of the scale factor as would be
+    supplied with the -SCALE command.  In other words, -SCALE .5 is
+    equivalent to -SHRINK 2.  This command line option is for convenience,
+    since it can sometimes be more intuitive than -SCALE.  No fixed scale
+    factor is applied by default.
+
+  -FILT -NFILT
+
+    Enable (-FILT) or disable (-NFILT) smooth filtering.
+
+    When smooth filtering is enabled, the input pixels are interpreted as
+    point samples at their centers.  An output pixel's value is a weighted
+    average of the input samples withing a small region around the output
+    pixel.  Many input pixels may therefore be taken into account to
+    produce each output pixel, especially at high shrink factors.  This
+    produces the appearance of a smooth, as apposed to stair-stepped
+    output image.  This causes anti-aliasing to happen when the image is
+    shrunk.  Smooth filtering preserves the most information from the
+    input image.
+
+    When smooth filtering is disabled, the input pixels are interpreted as
+    abutting rectangles of solid colors.  An output pixel's value is
+    simply the value found at its center. Therefore the value of each
+    output pixel comes from exactly one input pixel.  This process is
+    sometimes called "pixel replication zoom" at high scale factors.
+    -NFILT may be useful to enlarge an image but still show the individual
+    original pixels, and for some special effects.  Filtering also
+    requires much more computation, so -NFILT will be significantly faster
+    than -FILT.
+
+    Smooth filtering is enabled by default (-FILT).
+
+  -COM <comment string>
+
+    Add a comment to the image output file.  There may be any number of
+    -COM command line options.  Note that the comment string must be
+    enclosed in quoted ("") or apostrophies ('') if it contains any blanks
+    or special characters.
+
+    Image file comments can be viewed with the IMAGE_INFO program.
+
+  -FTYPE <output file type>
+
+    Explicitly set the output image file type.  See the IMAGE_TYPES
+    documentation file for a list of the supported output image file
+    types.  The -FTYPE argument is the image file type name, like "IMG",
+    or "GIF".  The argument is case-insensitive, regardless of the file
+    type suffix.  By default, the output image file type is derived from
+    the output image file name if possible, else the IMG image file type
+    is used.
+
+  -FORM <format string>
+
+    This allows additional configuration information to be passed to the
+    output image file driver.  See the IMAGE_COPY program documentation
+    file for a full description of the -FORM command line option.

@@ -1,0 +1,72 @@
+                           Program IMAGE_FLIP
+                            24 October 2004
+ image_flip [options]
+
+This program can rotate an image multiples of 1/4 turn in either
+direction.  It can also mirror flip the image top to bottom or left to
+right.  The command line options are:
+
+  <input file name>
+
+    When a command line option is encountered that does not start with a
+    dash (-) it is assumed to be the input file name, if the input file
+    name has not already been set.  This form of specifying the input file
+    name is for convenience, and does not work when the name starts with a
+    dash.  The -IN command line option works in all cases.  There is no
+    default input file name.  It is an error if no input file name is
+    supplied.
+
+  <output file name>
+
+    When a command line option is encountered that does not start with a
+    dash (-) it is assumed to be the output file name, if the input file
+    name has already been set.  This form of specifying the output file
+    name is for convenience, and does not work when the name starts with a
+    dash.  The -OUT command line option works in all cases.  The default
+    output file name is the generic leafname (no directory path, no file
+    type suffix) of the input file.
+
+  -IN <input file name>
+
+    Explicitly set the input file name.  See the IMAGE_TYPES documentation
+    file for a discussion of image file naming conventions.  There is no
+    default input file name.  It is an error if no input file name is
+    supplied.
+
+  -OUT <output file name>
+
+    Explicitly set the input file name.  See the IMAGE_TYPES documentation
+    file for a discussion of image file naming conventions.  The image
+    file format can be selected by using a file type suffix.  See the
+    IMAGE_TYPES documentation file for details.  The default output file
+    name is the generic leafname (no directory path, no file type suffix)
+    of the input file.
+
+  -FLIPLR
+
+    Flip the image left-to-right.  This produces a mirror image. -FLIPLR
+    is disabled by default.  Each -FLIPLR command line option toggles the
+    -FLIPLR state.
+
+  -FLIPUD
+
+    Flip the image upside down.  Note that this is different from rotating
+    the image upside down.  -FLIPUD produces an updside down image that is
+    also mirror flipped.  -FLIPUD is disabled by default.  Each -FLIPUD
+    command line option toggles the -FLIPUD state.
+
+  -ROTR
+
+    Rotate the image 1/4 turn (90 degrees) to the right after any flipping
+    is applied.  -ROTR is disabled by default.  Each -ROTR command line
+    option toggles the -ROTR state.
+
+  -ROTL
+
+    Rotate the image 1/4 turn to the left.  This is actually a convenience
+    wrapper for -FLIPLR, -FLIPUD, and -ROTR.
+
+  -ROTUD
+
+    Rotate the image 1/2 turn.  This is actually a convenience wrapper for
+    -FLIPLR and -FLIPUD.

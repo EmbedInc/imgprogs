@@ -15,4 +15,5 @@ call src_prog %srcdir% image_filter
 call src_prog %srcdir% image_flip
 call src_prog %srcdir% image_hist
 call src_prog %srcdir% image_info
+call src_prog %srcdir% image_mask
 call src_prog %srcdir% image_resize

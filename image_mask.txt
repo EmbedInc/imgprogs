@@ -1,0 +1,54 @@
+                            Program IMAGE_MASK
+                               27 May 2023
+
+image_mask [options]
+
+Read a full color image and produce a transparency mask of the foreground
+content.  Each pixel, the input color is thresholded to decide whether it
+represents background or foreground.  By default, background is written to
+the output file as fully transparent, and foreground as fully opaque
+white.
+
+The command line options are:
+
+  -IN filename
+  filename
+
+    Sets the input file name.  The image file type suffix can be omitted
+    from FILENAME.  See the IMAGE_TYPES documentation file for a list of
+    supported image types and their file name suffixes.  The file name
+    must be enclosed in quotes or apostrophies if it contains spaces or
+    any special characters.
+
+    The first form of this option with the "-IN" keyword is the general
+    form that works in all cases.  The second for is a shortcut that works
+    when the file name does not match any command line option keyword.
+
+  -OUT filename
+  filename
+
+    Like -IN except that is explicitly sets the output file name.  The
+    default output file name is the generic input file name with "_wht"
+    appended.  When the -BLK command line option is used, then "_blk" is
+    appended instead.  The default output file format is TIF.
+
+  -TH red grn blu
+
+    Specifies the threshold to distinguish foreground from background.
+    RED, GRN, and BLU are the red, green and blue color components of the
+    threshold in 0.0 to 1.0 scale.  A color is considered foreground when
+    any of its color components meets or exceeds its corresponding
+    threshold.
+
+    The default is 0.5, 0.5 0.5.
+
+  -INV
+
+    The sense of the threshold comparison is reversed.  A color is
+    considered foreground when any of its components is less then or equal
+    to its threshold.
+
+  -BLK
+
+    Causes foreground to be opaque black.  The default is opaque white.
+    The background is always written as fully transparent.

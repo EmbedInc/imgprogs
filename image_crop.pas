@@ -40,6 +40,7 @@ var
   iname_set: boolean;                  {TRUE if the input file name already set}
   oname_set: boolean;                  {TRUE if the output file name already set}
   img_in, img_out: img_conn_t;         {connection handles to in and out images}
+  inasp: real;                         {full input image aspect ratio}
   comm: string_list_t;                 {image file comment lines}
   ucomm: string_list_t;                {explicit user comments}
   sz: sys_int_adr_t;                   {memory size}
@@ -52,6 +53,7 @@ var
   r: real;                             {scratch floating point}
   size_set: boolean;                   {output image size explicitly set}
   ul_set: boolean;                     {upper left within source image explicitly set}
+  inasp_set: boolean;                  {input image aspect ratio explicitly set}
 
   opt:                                 {upcased command line option}
     %include '(cog)lib/string_treename.ins.pas';
@@ -79,6 +81,7 @@ begin
 }
   iname_set := false;                  {no input file name specified}
   oname_set := false;                  {no output file name specified}
+  inasp_set := false;                  {no input image aspect ratio override}
   xlft := 0;                           {init output rectangle in input image}
   nox := 1000000000;
   ytop := 0;
@@ -116,7 +119,7 @@ next_opt:
     end;
   string_upcase (opt);                 {make upper case for matching list}
   string_tkpick80 (opt,                {pick command line option name from list}
-    '-IN -OUT -SIZE -UL -COM -FTYPE -FORM -BACKG',
+    '-IN -OUT -SIZE -UL -COM -FTYPE -FORM -BACKG -INASP',
     pick);                             {number of keyword picked from list}
   case pick of                         {do routine for specific option}
 {
@@ -204,6 +207,14 @@ next_opt:
   backg.blu := round(max(0.0, min(65535.0, r*65536.0)));
   end;
 {
+*   -INASP ratio
+}
+9: begin
+  string_cmline_token_fpm (inasp, stat);
+  if sys_error(stat) then goto err_parm;
+  inasp_set := true;
+  end;
+{
 *   Unrecognized command line option.
 }
 otherwise
@@ -237,6 +248,10 @@ done_opts:                             {done with all the command line options}
   sys_msg_parm_vstr (msg_parm[1], fnam_in);
   sys_error_abort (stat, 'img', 'open_read', msg_parm, 1);
 
+  if not inasp_set then begin          {input image aspect ratio not overridden ?}
+    inasp := img_in.aspect;            {use aspect ratio from input image file}
+    end;
+
   if not size_set then begin           {crop region size not set ?}
     nox := img_in.x_size;              {init to size of input image}
     noy := img_in.y_size;
@@ -248,7 +263,7 @@ done_opts:                             {done with all the command line options}
   xrit := xlft + nox - 1;              {make implied right/bottom edge limits}
   ybot := ytop + noy - 1;
 
-  paspect := img_in.aspect * img_in.y_size / img_in.x_size; {make pixel aspect ratio}
+  paspect := inasp * img_in.y_size / img_in.x_size; {make pixel aspect ratio}
   sz := sizeof(iscan_p^[0]) * img_in.x_size; {allocate input scan line}
   img_mem_alloc (img_in, sz, iscan_p);
 {
@@ -290,6 +305,11 @@ done_opts:                             {done with all the command line options}
   string_appends (opt, ' '(0));
   string_f_int (parm, noy);
   string_append (opt, parm);
+  if inasp_set then begin
+    string_f_fp_free (parm, inasp, 5);
+    string_appends (opt, ' -INASP '(0));
+    string_append (opt, parm);
+    end;
   comm.size := opt.len;
   string_list_line_add (comm);
   string_copy (opt, comm.str_p^);

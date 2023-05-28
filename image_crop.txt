@@ -1,5 +1,5 @@
                            Program IMAGE_CROP
-                             10 June 2005
+                              28 May 2023
 
 image_crop [options]
 
@@ -54,6 +54,19 @@ file formats.  The command line options are:
     image.  This is therefore also the output image size.  The default is
     to write to the right and lower edges of the input image.
 
+  -INASP ratio
+
+    Explicitly sets the full input image width/height aspect ratio.  The
+    default is to use whatever is specified in the input image file.  If
+    no aspect ratio is defined in the input image file, then the default
+    is to assume the input image pixels are square.
+
+  -BACKG red grn blu
+
+    Set the color (background) to use when the source is outside the input
+    image dimensions.  RED, GRN, and BLU are the color components in the 0
+    to 1 scale.  The default is 0,0,0 (black).
+
   -COM <comment string>
 
     Add a comment to the image output file.  There may be any number of
@@ -78,6 +91,3 @@ file formats.  The command line options are:
     This allows additional configuration information to be passed to the
     output image file driver.  See the IMAGE_COPY program documentation
     file for a full description of the -FORM command line option.
-
-The region copied from the input image is always clipped to the extent of
-the input image, and must be at least 1 pixel in size.
